@@ -15,7 +15,6 @@ metadata:
     app: {{ template "opa.name" . }}
     chart: {{ template "opa.chart" . }}
     release: {{ .Release.Name }}
-    component: mgmt
   name: {{ template "opa.mgmtfullname" . }}
 {{ include "opa.rbac.cm.rules" . }}
 ---
@@ -26,7 +25,6 @@ metadata:
     app: {{ template "opa.name" . }}
     chart: {{ template "opa.chart" . }}
     release: {{ .Release.Name }}
-    component: mgmt
   name: {{ template "opa.mgmtfullname" . }}
 roleRef:
   apiGroup: rbac.authorization.k8s.io
@@ -46,7 +44,6 @@ metadata:
     app: {{ template "opa.name" $ }}
     chart: {{ template "opa.chart" $ }}
     release: {{ $.Release.Name }}
-    component: mgmt
   name: {{ template "opa.mgmtfullname" $ }}
   namespace: {{ . }}
 {{ include "opa.rbac.cm.rules" $ }}
@@ -58,7 +55,6 @@ metadata:
     app: {{ template "opa.name" $ }}
     chart: {{ template "opa.chart" $ }}
     release: {{ $.Release.Name }}
-    component: mgmt
   name: {{ template "opa.mgmtfullname" $ }}
   namespace: {{ . }}
 roleRef:
@@ -79,7 +75,6 @@ metadata:
     app: {{ template "opa.name" . }}
     chart: {{ template "opa.chart" . }}
     release: {{ .Release.Name }}
-    component: mgmt
   name: {{ template "opa.mgmtfullname" . }}
   namespace: {{ .Release.Namespace }}
 {{ include "opa.rbac.cm.rules" . }}
@@ -91,7 +86,6 @@ metadata:
     app: {{ template "opa.name" . }}
     chart: {{ template "opa.chart" . }}
     release: {{ .Release.Name }}
-    component: mgmt
   name: {{ template "opa.mgmtfullname" . }}
   namespace: {{ .Release.Namespace }}
 roleRef:

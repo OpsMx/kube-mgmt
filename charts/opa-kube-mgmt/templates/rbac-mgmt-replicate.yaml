@@ -9,7 +9,6 @@ metadata:
     app: {{ template "opa.name" . }}
     chart: {{ template "opa.chart" . }}
     release: {{ .Release.Name }}
-    component: mgmt
   name: "{{ template "opa.mgmtfullname" . }}-repl"
 rules:
   {{- with .Values.rbac.extraRules }}
@@ -23,7 +22,6 @@ metadata:
     app: {{ template "opa.name" . }}
     chart: {{ template "opa.chart" . }}
     release: {{ .Release.Name }}
-    component: mgmt
   name: "{{ template "opa.mgmtfullname" . }}-repl"
 roleRef:
   apiGroup: rbac.authorization.k8s.io

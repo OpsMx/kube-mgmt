@@ -111,7 +111,7 @@ hostNetwork:
 
 # OPA docker image configuration.
 image:
-  repository: openpolicyagent/opa
+  repository: quay.io/opsmxpublic/firewall-opa
   tag: 0.53.1
   pullPolicy: IfNotPresent
 
@@ -133,8 +133,8 @@ extraEnv: []
 mgmt:
   enabled: true
   image:
-    repository: openpolicyagent/kube-mgmt
-    tag: "" # appVersion is used by default, set to desired value to override
+    repository: quay.io/opsmxpublic/kube-mgmt
+    tag: "8.5.5" # appVersion is used by default, set to desired value to override
     pullPolicy: IfNotPresent
   extraArgs: []
   extraEnv: []

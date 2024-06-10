@@ -1,0 +1,75 @@
+apiVersion: v1
+data:
+ main: |
+   package system
+
+   import data.kubernetes.namespaces
+   import data.kubernetes.nodes
+
+   namespace := input.request.namespace
+   pod := input.request.object
+   labels := pod.metadata.labels
+   containers := pod.spec.containers
+   image := containers[_].image
+
+   api_response = response_body {
+
+       input.request.kind.kind == "Pod"
+       input.request.operation == "CREATE"
+       namespace_labels := namespaces[input.request.namespace].metadata.labels
+       node_labels := nodes[_].metadata.labels
+       token := "{{ .Values.kubedetectorsecretvalue }}"
+
+       # Create an HTTP POST request to your endpoint
+       request := {
+           "method": "POST",
+           "url": "https://{{ .Values.ssdurl }}/ssdservice/v1/opa-firewall",
+           "body": json.marshal({
+               "labels": labels,
+               "namespaceLabels": namespace_labels,
+               "image": image,
+               "namespace": namespace,
+               "nodeLabels": node_labels
+           }),
+           "headers": {
+               "X-OpsMx-Auth": sprintf("Bearer %v", [token]),
+           },
+           "timeout": "30s"
+       }
+       response := http.send(request)
+       response_body := response.body
+       print("******** Response from SSD Policy Check API *******  ",response_body)
+   }
+
+   reason := sprintf("block_for_ssd_opa_prevent_action: SSD Blocked Deployment of Image %v over namespace %v due to violations of SSD Deployment Firewall Policies", [image, namespace])
+
+   response = {
+       "uid": input.request.uid,
+       "allowed": true
+   } {
+       api_response.allow
+   }
+
+   # Denial response
+   response = {
+       "uid": input.request.uid,
+       "allowed": false,
+       "status": {
+           "message": reason
+       }
+   } {
+       not api_response.allow
+   }
+
+   # The main rule
+   main = {
+       "apiVersion": "admission.k8s.io/v1",
+       "kind": "AdmissionReview",
+       "response": response
+   }
+kind: ConfigMap
+metadata:
+ labels:
+   app: opa
+   openpolicyagent.org/policy: rego
+ name: ssd-firewall-policy
