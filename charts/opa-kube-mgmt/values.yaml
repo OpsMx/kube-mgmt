@@ -42,7 +42,7 @@ bootstrapPolicies: {}
 
 # Admission controller configuration.
 admissionController:
-  enabled: false
+  enabled: true
 
   # To enforce mutating policies, change to MutatingWebhookConfiguration.
   kind: ValidatingWebhookConfiguration
@@ -58,7 +58,7 @@ admissionController:
   # Adds a namespace selector to the admission controller webhook
   namespaceSelector:
     matchExpressions:
-      - {key: openpolicyagent.org/webhook, operator: NotIn, values: [ignore]}
+      - {key: opsmx-ssd.com/webhook, operator: In, values: [ignore]}
 
   # SideEffectClass for the webhook, setting to NoneOnDryRun enables dry-run.
   # Only None and NoneOnDryRun are permitted for admissionregistration.k8s.io/v1.
@@ -68,10 +68,14 @@ admissionController:
   # policy checks, see the settings below. By default, all resources and
   # operations are subject to OPA policy checks.
   rules:
-    - operations: ["*"]
+    - operations:
+      - CREATE
+      - UPDATE
       apiGroups: ["*"]
-      apiVersions: ["*"]
-      resources: ["*"]
+      apiVersions: ["v1"]
+      resources:
+      - namespaces
+      - pods
 
 # The helm Chart will automatically generate a CA and server certificate for
 # the OPA. If you want to supply your own certificates, set the field below to
@@ -136,7 +140,9 @@ mgmt:
     repository: quay.io/opsmxpublic/kube-mgmt
     tag: "8.5.5" # appVersion is used by default, set to desired value to override
     pullPolicy: IfNotPresent
-  extraArgs: []
+  extraArgs:
+  - "--replicate-cluster=v1/namespaces"
+  - "--replicate-cluster=v1/nodes"
   extraEnv: []
   resources: {}
 

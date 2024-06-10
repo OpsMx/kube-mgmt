@@ -3,29 +3,3 @@ ssdurl: SSD.URL.COM
 
 ## Update the Kubernetes Detector Secret Value
 kubedetectorsecretvalue: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IlNhaSBUZWphIiwiaWF0IjoxNTE2MjM5MDIyfQ.-eaE5t4l6DQHh4NQK4S_DBlMGd9h3ksvZXv6ObG1otE
-
-###### User don't want to change the below entries Let it be the default one ########
-#nameOverride: opsmx-firewall
-
-# Admission controller configuration.
-admissionController:
-  enabled: true
-
-  namespaceSelector:
-    matchExpressions:
-      - {key: opsmx-ssd.com/webhook, operator: In, values: [ignore]}
-
-  rules:
-    - operations:
-      - CREATE
-      - UPDATE
-      apiGroups: ["*"]
-      apiVersions: ["v1"]
-      resources: 
-      - namespaces
-      - pods
-
-mgmt:
-  extraArgs:
-  - "--replicate-cluster=v1/namespaces"
-  - "--replicate-cluster=v1/nodes"
